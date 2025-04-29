@@ -6,14 +6,19 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"time"
 )
 
 func main() {
-	httpClient := http.Client{}
+	client := http.Client{}
+	http.HandleFunc("/test", func(writer http.ResponseWriter, request *http.Request) {
+		sendRequest(client, request.Context())
+	})
 
-	ctx, cancelFunc := context.WithTimeout(context.Background(), 2*time.Second)
-	defer cancelFunc()
+	log.Println("Server is listening")
+	log.Fatal(http.ListenAndServe(":8088", nil))
+}
+
+func sendRequest(httpClient http.Client, ctx context.Context) {
 	request, err := http.NewRequestWithContext(ctx, http.MethodGet, "http://localhost:8080/test", nil)
 	if err != nil {
 		log.Printf("Error while creating request: %s\n", err.Error())
