@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	_ "github.com/lib/pq"
 	"log"
 )
@@ -34,10 +33,27 @@ func selectValues(db *sql.DB) {
 	if err != nil {
 		log.Fatalf("Couldn't insert users, err: %s", err.Error())
 	}
-	fmt.Println(rows)
+	for rows.Next() {
+		var id int
+		var name string
+		if err = rows.Scan(&id, &name); err != nil {
+			log.Printf("Error while scanning rows: %s", err.Error())
+		}
+		log.Printf("User with id: %d, name: %s", id, name)
+	}
 
 	rows, err = db.Query("select id, name, user_id from books")
 	if err != nil {
 		log.Fatalf("Couldn't insert books, err: %s", err.Error())
+	}
+
+	for rows.Next() {
+		var id int
+		var name string
+		var userId int
+		if err = rows.Scan(&id, &name, &userId); err != nil {
+			log.Printf("Error while scanning rows: %s", err.Error())
+		}
+		log.Printf("Book with id: %d, name: %s, user_id: %d", id, name, userId)
 	}
 }
