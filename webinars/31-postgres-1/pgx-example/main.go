@@ -1,14 +1,16 @@
 package main
 
 import (
-	"database/sql"
-	_ "github.com/lib/pq"
+	"fmt"
+	_ "github.com/jackc/pgx/stdlib"
+	"github.com/jmoiron/sqlx"
 	"log"
+	"otus/postgres/pgx-example/model"
 )
 
 func main() {
 	dsn := "postgresql://user:password@localhost:5432/otus-go-basic?sslmode=disable"
-	db, err := sql.Open("postgres", dsn)
+	db, err := sqlx.Open("pgx", dsn)
 	if err != nil {
 		log.Fatalf("Couldn't open db, err: %s", err.Error())
 	}
@@ -21,7 +23,7 @@ func main() {
 	selectValues(db)
 }
 
-func insertValues(db *sql.DB) {
+func insertValues(db *sqlx.DB) {
 	_, err := db.Exec("insert into users(name) values('John'), ('Patric')")
 	if err != nil {
 		log.Fatalf("Couldn't insert users, err: %s", err.Error())
@@ -38,32 +40,31 @@ func insertValues(db *sql.DB) {
 	}
 }
 
-func selectValues(db *sql.DB) {
-	rows, err := db.Query("select id, name from users")
+func selectValues(db *sqlx.DB) {
+	rows, err := db.Queryx("select id, name from users")
 	if err != nil {
-		log.Fatalf("Couldn't insert users, err: %s", err.Error())
+		log.Fatalf("Couldn't select users, err: %s", err.Error())
 	}
 	for rows.Next() {
-		var id int
-		var name string
-		if err = rows.Scan(&id, &name); err != nil {
-			log.Printf("Error while scanning rows: %s", err.Error())
+		var user model.User
+		err = rows.StructScan(&user)
+		if err != nil {
+			log.Fatalf("Couldn't parse users, err: %s", err.Error())
 		}
-		log.Printf("User with id: %d, name: %s", id, name)
+		fmt.Println(user)
 	}
 
-	rows, err = db.Query("select id, name, user_id from books")
+	rows, err = db.Queryx("select id, name, user_id from books")
 	if err != nil {
 		log.Fatalf("Couldn't insert books, err: %s", err.Error())
 	}
 
 	for rows.Next() {
-		var id int
-		var name string
-		var userId int
-		if err = rows.Scan(&id, &name, &userId); err != nil {
-			log.Printf("Error while scanning rows: %s", err.Error())
+		var book model.Book
+		err = rows.StructScan(&book)
+		if err != nil {
+			log.Fatalf("Couldn't parse users, err: %s", err.Error())
 		}
-		log.Printf("Book with id: %d, name: %s, user_id: %d", id, name, userId)
+		fmt.Println(book)
 	}
 }
