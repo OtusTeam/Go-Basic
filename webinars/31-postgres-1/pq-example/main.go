@@ -12,6 +12,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Couldn't open db, err: %s", err.Error())
 	}
+	db.SetMaxOpenConns(10)
 	err = db.Ping()
 	if err != nil {
 		log.Fatalf("Failed to connect to db: %s", err.Error())

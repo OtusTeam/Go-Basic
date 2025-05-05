@@ -14,6 +14,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Couldn't open db, err: %s", err.Error())
 	}
+	db.SetMaxOpenConns(10)
 	err = db.Ping()
 	if err != nil {
 		log.Fatalf("Failed to connect to db: %s", err.Error())
@@ -43,7 +44,7 @@ func insertValues(db *sqlx.DB) {
 func selectValues(db *sqlx.DB) {
 	rows, err := db.Queryx("select id, name from users")
 	if err != nil {
-		log.Fatalf("Couldn't select users, err: %s", err.Error())
+		log.Printf("Couldn't select users, err: %s", err.Error())
 	}
 	for rows.Next() {
 		var user model.User
@@ -56,14 +57,14 @@ func selectValues(db *sqlx.DB) {
 
 	rows, err = db.Queryx("select id, name, user_id from books")
 	if err != nil {
-		log.Fatalf("Couldn't insert books, err: %s", err.Error())
+		log.Printf("Couldn't select books, err: %s", err.Error())
 	}
 
 	for rows.Next() {
 		var book model.Book
 		err = rows.StructScan(&book)
 		if err != nil {
-			log.Fatalf("Couldn't parse users, err: %s", err.Error())
+			log.Fatalf("Couldn't parse books, err: %s", err.Error())
 		}
 		fmt.Println(book)
 	}

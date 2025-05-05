@@ -17,6 +17,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("Couldn't open db, err: %s", err.Error())
 	}
+	sqlDB, err := db.DB()
+	if err != nil {
+		log.Fatalf("Couldn't get sqlDB, err: %s", err.Error())
+	}
+	sqlDB.SetMaxOpenConns(10)
 
 	insertAuthors(db)
 	insertUsers(db)
