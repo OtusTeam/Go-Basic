@@ -1,4 +1,4 @@
-name: otus-go-basic-postgres-1
+name: otus-go-basic-postgres-2
 
 services:
   postgres:
@@ -11,7 +11,7 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
     volumes:
-      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres:/var/lib/postgresql/data
     networks:
       - postgres
 
