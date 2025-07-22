@@ -1,0 +1,36 @@
+To check os heap and stack for process on macOS:
+vmmap <pid> | grep STACK
+vmmap <pid> | grep MALLOC
+
+Escape analysis:
+go build -gcflags "-m" server.go
+
+The Go GC is a concurrent non-generational tri-color mark and sweep garbage collector.
+
+Trace:
+curl -o trace.out 'http://localhost:8080/debug/pprof/trace?seconds=5'
+go tool trace trace.out
+
+Trace GC:
+GODEBUG="gctrace=1" go run server.go
+
+Currently, it is:
+	gc # @#s #%: #+#+# ms clock, #+#/#/#+# ms cpu, #->#-># MB, # MB goal, # MB stacks, #MB globals, # P
+where the fields are as follows:
+	gc #         the GC number, incremented at each GC
+	@#s          time in seconds since program start
+	#%           percentage of time spent in GC since program start
+	#+...+#      wall-clock/CPU times for the phases of the GC
+	#->#-># MB   heap size at GC start, at GC end, and live heap, or /gc/scan/heap:bytes
+	# MB goal    goal heap size, or /gc/heap/goal:bytes
+	# MB stacks  estimated scannable stack size, or /gc/scan/stack:bytes
+	# MB globals scannable global size, or /gc/scan/globals:bytes
+	# P          number of processors used, or /sched/gomaxprocs:threads
+
+Links:
+https://habr.com/ru/companies/smart_soft/articles/185226/
+https://tip.golang.org/doc/gc-guide
+https://go.dev/doc/faq#stack_or_heap
+https://ihagopian.com/posts/write-barriers-in-the-go-garbage-collector
+https://habr.com/ru/companies/avito/articles/753244/
+https://habr.com/ru/articles/742402/
