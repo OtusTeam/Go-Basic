@@ -1,0 +1,2 @@
+https://go.dev/blog/race-detector
+https://medium.com/@okoanton/the-internals-of-sync-map-and-its-performance-comparison-with-map-rwmutex-e000e148600c
