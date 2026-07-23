@@ -1,10 +1,7 @@
 package main
 
-import "fmt"
-
 func main() {
-	n := answer()
-	fmt.Println(*n)
+	_ = answer()
 }
 
 func answer() *int {

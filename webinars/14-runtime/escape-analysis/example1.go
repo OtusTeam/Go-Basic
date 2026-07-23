@@ -1,11 +1,8 @@
 package main
 
-import "fmt"
-
 func main() {
 	n := 4
-	sq := square(n)
-	fmt.Println(sq)
+	_ = square(n)
 }
 
 func square(x int) int {
