@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"sync"
 	"testing"
 )
@@ -72,4 +73,18 @@ func BenchmarkSyncMap_Store(b *testing.B) {
 	}
 
 	wg.Wait()
+}
+
+func TestCountersDoesNotPanic(t *testing.T) {
+	defer func() {
+		if r := recover(); r != nil {
+			t.Errorf("The code panicked with: %v", r)
+		}
+	}()
+
+	var counters *Counters
+	fmt.Println(counters.Load(1))
+	counters = NewCounters()
+	counters.Store(1, 1)
+	fmt.Println(counters.Load(1))
 }
