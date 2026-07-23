@@ -15,6 +15,9 @@ func NewCounters() *Counters {
 }
 
 func (c *Counters) Load(key int) (int, bool) {
+	if c == nil {
+		return 0, false
+	}
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 
