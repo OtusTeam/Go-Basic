@@ -31,9 +31,12 @@ func sendRequest(httpClient http.Client, ctx context.Context) {
 		log.Printf("Error while sending request: %s\n", err.Error())
 		return
 	}
-
-	bytes, err := io.ReadAll(response.Body)
 	defer response.Body.Close()
+	bytes, err := io.ReadAll(response.Body)
+	if err != nil {
+		log.Printf("Error while reading response body: %s\n", err.Error())
+		return
+	}
 
 	log.Printf("Response from server: %s\n", string(bytes))
 }
